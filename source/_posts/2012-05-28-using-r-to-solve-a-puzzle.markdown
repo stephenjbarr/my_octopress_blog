@@ -21,7 +21,7 @@ I wanted to see if I could use `R` to solve this. It turns out, it is pretty eas
 The code is as follows: 
 
    
-    
+``` r    
     x = 1:99999
     xbig = strsplit(formatC(x, width=5, flag=<span style="color: #2aa198;">"0"</span>), <span style="color: #2aa198;">""</span>)
     xdf = do.call(rbind, xbig)
@@ -38,7 +38,7 @@ The code is as follows:
     candidates = xnum[c14,]
     cond5 = apply(candidates, 1, <span style="color: #859900;">function</span>(x) length(unique(x)) < 5)
     candidates[cond5,] 
-    
+```    
     
 
   

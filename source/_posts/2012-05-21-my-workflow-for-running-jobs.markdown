@@ -16,9 +16,9 @@ I start working on [my dev box](http://steve.planetbarr.com/wordpress/?page_id=8
 Say my model is an executable called `model`, and it takes command line parameters in the form: 
 
    
-    
-    model --alpha=<span style="color: #2aa198;">'0.5123'</span> --beta=<span style="color: #2aa198;">'0.95'</span> --N=1000 
-    
+```    
+    model --alpha='0.5123' --beta='0.95' --N=1000 
+```    
 
   
 
@@ -32,19 +32,19 @@ where `alpha` and `beta` are the parameters of interest. According to the diagra
 
 **Some Python to show the general idea:**
 
+``` python
+uuid_g = str(uuid.uuid4()) ### uuid_g (group uuid) gets set outside loop
+s3bucket = "my_bucket"     ### s3bucket getrs set outside loop
+
+for i in range(0,N):    
+    ## paramstr gets set somewhere here, unique to i
+    ## uuid_i is unique to i
+    queuemessage = paramstr + "," + s3bucket + "," + uuid_i + "," + uuid_g
+    m = Message()
+    m.set_body(queuemessage)
+    status = q.write(m)
+```
   
-    
-    <span style="color: #268bd2;">uuid_g</span> = <span style="color: #859900;">str</span>(uuid.uuid4()) <span style="font-style: italic;">### uuid_g (group uuid) gets set outside loop</span>
-    <span style="color: #268bd2;">s3bucket</span> = <span style="color: #2aa198;">"my_bucket"</span>     <span style="font-style: italic;">### s3bucket getrs set outside loop</span>
-    
-    <span style="color: #859900;">for</span> i <span style="color: #859900;">in</span> <span style="color: #859900;">range</span>(0,N):    
-        <span style="font-style: italic;">## paramstr gets set somewhere here, unique to i</span>
-        <span style="font-style: italic;">## uuid_i is unique to i</span>
-        queuemessage = paramstr + <span style="color: #2aa198;">","</span> + s3bucket + <span style="color: #2aa198;">","</span> + uuid_i + <span style="color: #2aa198;">","</span> + uuid_g
-        m = Message()
-        m.set_body(queuemessage)
-        status = q.write(m)
-    
     
 
   
@@ -74,8 +74,11 @@ In this section, I show what I do for running the tasks. Each of my instances on
   2. **If** there are tasks in the queue 
     1. Read the message "0.5,0.95,eeba09f3,552a6f8c" 
     2. Construct the string     
+
+```
+      ./model --alpha=0.5 --beta=0.95 --output_base='eeba09f3/552a6f8c'
+```
     
-    ./model --alpha=0.5 --beta=0.95 --output_base=<span style="color: #2aa198;">'eeba09f3/552a6f8c'</span>
     
 
   
@@ -108,11 +111,9 @@ To actually get the results to my dev box, I use `s3cmd`, but [a modified one th
 
 Once I have the results locally, I want to load them into [R](http://www.r-project.org/). The issue is, I have one giant directory `${uuid_g}` which has `N` `output.csv` files and just as many `param.csv` files. The first thing you can do is search for ones that have the `${uuid_g}/${uuid_i}___success.txt` file with grep, and make a list of the `${uuid_g}/${uuid_i}`. In my case, I simply looked for the word "SUCCESS" in the output. 
 
-   
-    
-    grep -r <span style="color: #2aa198;">"SUCCESS"</span> . | perl -ne <span style="color: #2aa198;">'$_ =~/(\/.*)___/; print $1 . "\n"'</span> > solved_good.txt
-    
-
+```
+grep -r "SUCCESS" . | perl -ne '$_ =~/(\/.*)___/; print $1 . "\n"' > solved_good.txt
+```   
   
 
 should get you most of the way there. From here, it is simply a matter of iterating over each line of `solved_good.txt` and reading in the files. Some `R` code in the appendix should be helpful. 
@@ -152,133 +153,123 @@ Enjoy and happy computing!
 
 ### Generate a numpy matrix of random parameterizations, given an upper and lower bound for each parameter
 
-    
-    
-    <span style="color: #859900;">import</span> numpy <span style="color: #859900;">as</span> np
-    <span style="color: #859900;">from</span> collections <span style="color: #859900;">import</span> OrderedDict  <span style="font-style: italic;">## this requires Python 2.7</span>
-    
-    <span style="color: #268bd2;">paramDict</span> = OrderedDict();
-    paramDict[<span style="color: #2aa198;">'theta'</span>]     = np.array([0.5,0.9])
-    paramDict[<span style="color: #2aa198;">'rho'</span>]       = np.array([0.15,0.95])
-    paramDict[<span style="color: #2aa198;">'sigma_v'</span>]   = np.array([0.01,0.6])
-    paramDict[<span style="color: #2aa198;">'a'</span>]         = np.array([0.001, 0.4])
-    paramDict[<span style="color: #2aa198;">'gamma'</span>]     = np.array([0.001, 0.05])
-    paramDict[<span style="color: #2aa198;">'s'</span>]         = np.array([0.0001,0.01])
-    paramDict[<span style="color: #2aa198;">'lambda_1'</span>]  = np.array([0.01, 0.5])
-    paramDict[<span style="color: #2aa198;">'lambda_2'</span>]  = np.array([0.0001, 0.01])
-    
-    <span style="font-style: italic;">########################################</span>
-    <span style="color: #859900;">def</span> <span style="color: #268bd2;">genRandomRuns</span>(paramDict, Mruns):
-      params = paramDict.keys()
-      plen = <span style="color: #859900;">len</span>(params)
-    
-      runs_matrix = np.empty((Mruns, plen))
-      <span style="color: #859900;">for</span> i <span style="color: #859900;">in</span> <span style="color: #859900;">range</span>(Mruns):
-        <span style="color: #859900;">for</span> pp <span style="color: #859900;">in</span> <span style="color: #859900;">range</span>(plen):
-          ktemp = params[pp]
-          kary = paramDict[ktemp]
-          <span style="color: #859900;">if</span> <span style="color: #859900;">len</span>(kary) == 1:
-            runs_matrix[i,pp] = kary[0]
-          <span style="color: #859900;">else</span>:
-            lbound = kary[0]
-            ubound = kary[1]
-            runs_matrix[i,pp] = np.random.uniform(low=lbound, high=ubound)
-    
-      <span style="color: #859900;">return</span>(runs_matrix)
-    <span style="font-style: italic;">########################################</span>
-    
-    <span style="color: #268bd2;">ptable</span> = genRandomRuns(paramDict, 10000)
-    
-    
+``` python
+import numpy as np
+from collections import OrderedDict  ## this requires Python 2.7
 
-   
+paramDict = OrderedDict();
+paramDict['theta']     = np.array([0.5,0.9])
+paramDict['rho']       = np.array([0.15,0.95])
+paramDict['sigma_v']   = np.array([0.01,0.6])
+paramDict['a']         = np.array([0.001, 0.4])
+paramDict['gamma']     = np.array([0.001, 0.05])
+paramDict['s']         = np.array([0.0001,0.01])
+paramDict['lambda_1']  = np.array([0.01, 0.5])
+paramDict['lambda_2']  = np.array([0.0001, 0.01])
 
- 
+########################################
+def genRandomRuns(paramDict, Mruns):
+  params = paramDict.keys()
+  plen = len(params)
+  
+  runs_matrix = np.empty((Mruns, plen))
+  for i in range(Mruns):
+    for pp in range(plen):
+      ktemp = params[pp]
+      kary = paramDict[ktemp]
+      if len(kary) == 1:
+        runs_matrix[i,pp] = kary[0]
+      else:
+        lbound = kary[0]
+        ubound = kary[1]
+        runs_matrix[i,pp] = np.random.uniform(low=lbound, high=ubound)
 
- 
+  return(runs_matrix)
+########################################
+
+ptable = genRandomRuns(paramDict, 10000)
+```
+    
 
 ### Read  many output.csv files in R
 
-     
-    
-    <span style="color: #93a1a1; font-style: italic;">## </span><span style="font-style: italic;">set the root directory</span>
-    rootpath = <span style="color: #2aa198;">"/home/stevejb/mnt/csdata/barr_iss_storage___test/csdtr2"</span>
-    fname = <span style="color: #2aa198;">"solved_good_cs.txt"</span>
-    dfile.path = paste(rootpath, fname, sep=<span style="color: #2aa198;">"/"</span>)
-    files = read.table(dfile.path, header=<span style="color: #b58900;">FALSE</span>, as.is=<span style="color: #b58900;">TRUE</span>)
-    filebases.full = paste(rootpath, files[,1], sep=<span style="color: #2aa198;">""</span>)
-    
-    <span style="color: #93a1a1; font-style: italic;">## </span><span style="font-style: italic;">make a list of distinct uuid_g's and corresponding uuid_i's</span>
-    guidlist = list()
-    uuidlist = list()
-    flbase = files[,1]
-    ugdf = data.frame()
-    <span style="color: #859900;">for</span>(i <span style="color: #859900;">in</span> 1:length(flbase)) {
-      tmp = strsplit(files[i,1],<span style="color: #2aa198;">"/"</span>)
-      guidlist[[i]] = tmp[[1]][2]
-      uuidlist[[i]] = tmp[[1]][3]
-      ugdf[i,1] =   guidlist[[i]]
-      ugdf[i,2] =   uuidlist[[i]]
-    }
-    guidlist = unique(unlist(guidlist))
-    uuidlist = (unlist(uuidlist))
-    colnames(ugdf) <span style="color: #2aa198;"><-</span> c(<span style="color: #2aa198;">"guid"</span>, <span style="color: #2aa198;">"uuid"</span>) 
-    
-    cslist = list()
-    
-    <span style="color: #93a1a1; font-style: italic;">## </span><span style="font-style: italic;">for each uuid_g, read every uuid_i that corresponds</span>
-    <span style="color: #93a1a1; font-style: italic;">## </span><span style="font-style: italic;">(one uuid_g to many uuid_i's)</span>
-    
-    <span style="color: #859900;">for</span>(i <span style="color: #859900;">in</span> 1:length(guidlist)) {
-    
-      guid.i = guidlist[i]
-      uuids = subset(ugdf, guid==guid.i)$uuid
-      datalist = list()
-      datalist.ddw = list()
-    
-      basefiles   = paste(rootpath, guid.i, uuids, sep=<span style="color: #2aa198;">"/"</span>) 
-      paramfiles    = paste(basefiles, <span style="color: #2aa198;">"___params.csv"</span>, sep=<span style="color: #2aa198;">""</span>)
-      outfiles   = paste(basefiles, <span style="color: #2aa198;">"___output.csv"</span>, sep=<span style="color: #2aa198;">""</span>)
-    
-      count = 1
-      <span style="color: #859900;">for</span>(ii <span style="color: #859900;">in</span> 1:length(paramfiles)) {
-    
-    
-        OUTEXISTS = file.exists(outfiles[ii])
-        PARAMEXISTS = file.exists(paramfiles[ii])
-    
-        <span style="color: #859900;">if</span>( !( OUTEXISTS & PARAMEXISTS)) {
-          print(<span style="color: #2aa198;">"One file is missing"</span>)
-          <span style="color: #859900;">next</span>
-        }
-    
-        outlines =  length(readLines(outfiles[ii]))
-        paramlines = length(readLines(paramfiles[ii]))
-    
-        <span style="color: #859900;">if</span>( outlines == 0 |
-           paramlines == 0) {
-          <span style="color: #859900;">next</span>
-        }
-    
-    
-        param.ii = read.csv(paramfiles[ii], header=<span style="color: #b58900;">TRUE</span>)
-        out.ii = read.csv(outfiles[ii], header=<span style="color: #b58900;">FALSE</span>)
-    
-        <span style="color: #93a1a1; font-style: italic;">## </span><span style="font-style: italic;">something ad-hoc to bind the matrices together into</span>
-        <span style="color: #93a1a1; font-style: italic;">## </span><span style="font-style: italic;">one long named row</span>
-        m2df = data.frame(out.ii[,2])
-        rownames(m2df) = out.ii[,1]
-        rowdf = cbind(param.ii, t(m2df))  
-        datalist[[count]] = rowdf
-    
-        count = count + 1             
-      }
-    
-      csdf = do.call(<span style="color: #2aa198;">"rbind"</span>, datalist)
-      cslist[[i]] = csdf
-    
-    }
-    
-    
+``` r
+## set the root directory
+rootpath = "/home/stevejb/mnt/csdata/barr_iss_storage___test/csdtr2"
+fname = "solved_good_cs.txt"
+dfile.path = paste(rootpath, fname, sep="/")
+files = read.table(dfile.path, header=FALSE, as.is=TRUE)
+filebases.full = paste(rootpath, files[,1], sep="")
 
- 
+## make a list of distinct uuid_g's and corresponding uuid_i's
+guidlist = list()
+uuidlist = list()
+flbase = files[,1]
+ugdf = data.frame()
+for(i in 1:length(flbase)) {
+  tmp = strsplit(files[i,1],"/")
+  guidlist[[i]] = tmp[[1]][2]
+  uuidlist[[i]] = tmp[[1]][3]
+  ugdf[i,1] =   guidlist[[i]]
+  ugdf[i,2] =   uuidlist[[i]]
+}
+guidlist = unique(unlist(guidlist))
+uuidlist = (unlist(uuidlist))
+colnames(ugdf) <- c("guid", "uuid") 
+
+cslist = list()
+
+## for each uuid_g, read every uuid_i that corresponds
+## (one uuid_g to many uuid_i's)
+
+for(i in 1:length(guidlist)) {
+
+  guid.i = guidlist[i]
+  uuids = subset(ugdf, guid==guid.i)$uuid
+  datalist = list()
+  datalist.ddw = list()
+
+  basefiles   = paste(rootpath, guid.i, uuids, sep="/") 
+  paramfiles    = paste(basefiles, "___params.csv", sep="")
+  outfiles   = paste(basefiles, "___output.csv", sep="")
+
+  count = 1
+  for(ii in 1:length(paramfiles)) {
+
+
+    OUTEXISTS = file.exists(outfiles[ii])
+    PARAMEXISTS = file.exists(paramfiles[ii])
+
+    if( !( OUTEXISTS & PARAMEXISTS)) {
+      print("One file is missing")
+      next
+    }
+
+    outlines =  length(readLines(outfiles[ii]))
+    paramlines = length(readLines(paramfiles[ii]))
+
+    if( outlines == 0 |
+       paramlines == 0) {
+      next
+    }
+
+
+    param.ii = read.csv(paramfiles[ii], header=TRUE)
+    out.ii = read.csv(outfiles[ii], header=FALSE)
+
+    ## something ad-hoc to bind the matrices together into
+    ## one long named row
+    m2df = data.frame(out.ii[,2])
+    rownames(m2df) = out.ii[,1]
+    rowdf = cbind(param.ii, t(m2df))  
+    datalist[[count]] = rowdf
+
+    count = count + 1             
+  }
+
+  csdf = do.call("rbind", datalist)
+  cslist[[i]] = csdf
+
+}
+
+```
