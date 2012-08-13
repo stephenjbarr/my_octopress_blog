@@ -114,11 +114,11 @@ I recently figured out exactly how to do this, and wanted to document it for my 
 	
   2. From within R, do
 
-    
+``` r    
     install.packages(c("Rcpp", "RcppEigen", "inline"))
     library(RcppEigen)
     library(inline)
-
+```
 
 
 
