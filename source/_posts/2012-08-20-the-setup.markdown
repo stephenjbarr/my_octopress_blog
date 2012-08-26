@@ -1,0 +1,105 @@
+---
+layout: post
+title: "The Setup"
+date: 2012-08-20 22:59
+comments: true
+categories: misc
+---
+
+## Last update: 2012-08-20 22:59
+This post will be continually updated to reflect my current setup and preferences.
+
+## 1) Inspiration
+  This is my personal "The Setup" page, modeled after the official [The Setup] blog.
+
+[The Setup]: http://usesthis.com
+
+
+## 2) Who are you and what do you do?
+  My name is Stephen J. Barr. I do economics research, particularly in the field of operations management. My prior graduate work was in business economics and applied statistics.
+
+## 3) What hardware are you using?
+  My development workstation is a [Thinkmate] [HPX XS8-2462], with dual 6-core Xeon Sandy Bridge-EP 2620 CPUs, an NVidia Quadro 600 GPU, 64 GB of RAM, and a 128GB SSD. It is absurdly fast, reasonably quiet, and the build quality and reliability are fantastic. The hardware was designed to mimic Amazon's Elastic Compute Cloud's [CC2.8xlarge]. The CC2's have more cores (32 (hyperthreaded) vs my 24 (also hyperthreaded)), a bit less RAM, but are for the most part identical. This allows me to develop highly optimized code locally, specifically optimized for Intel's [Advanced Vector Extensions] (new on the Sandy Bridge-EP's) and move the binaries right to EC2. In essence, my development box is also node 0 of an infinitelyscalable cluster of CC2's. 
+
+The box is connected to two 22" [Acer Monitors]. One is a glossy X222W and the other is a matte AL2216Wbd. They are balanced on some old textbooks to get the height about right. For a keyboard, I have the [Rosewill RK-9000 with Cherry Blue] keys. This was after years with a [Microsoft Natural Keyboard Pro 4000]. I really like being able to pound on the keys, so they cherry blue keys are a good fit for that. The mouse is a [Logitech G400]. I like the weight of it. Interestingly, I use the mouse left handed since my [Dad] is left handed, and that is how the computer was set up when I first approached it. I assumed that that is where the mouse goes, and now I have adapted and prefer it on the left. 
+
+When I am mobile, my laptop is an [HP DV7t laptop]. The 17" screen is fun to work on, and I like the full size keyboard. It seems to get hot while running, so if it around the house I keep it on a [Cooler Master Notepal X2]. Anyone who has a laptop should have one of these. I also have a [Motorola Droid 3] which I like but am underutilizing. I get a ton of use out of my [Amazon Kindle Touch]. It is nice to use and I read a lot more, both for work and pleasure. It is nice to read papers and documentation on the kindle, although it can sometimes mangle tables and equations. When listening to music, I use [Sennheiser HD201 headphones] or an set of Caimbridge FPS2000 speakers I bought when I was a teenager but still produce great sound. I am watching for the [Kindle Fire 2](http://www.techradar.com/us/news/mobile-computing/tablets/amazon-kindle-fire-2-release-date-news-and-rumours-1043361) and will probably get one when it comes out.
+
+  For the non-electronic hardware, I usually use [National Brand Computation Notebooks]. I like the color, thickness, and size of the pages. My pen of choice is the [Pilot Precise Grip, Bold Point]. They work well with the lab notebooks. I don't like fine-point pens unless the ink is extremely dark. I
+try to sit on my 75cm yoga ball. My desk is a fantastic [Ikea Galant](http://www.ikea.com/us/en/catalog/products/S99806947/). It is attactive, large, and extremely well built. I would have no problem standing on it to change a lightbulb. At some point I will probably get an extension for one of the sides.
+
+[Thinkmate]: http://www.thinkmate.com
+[HPX XS8-2462]: http://www.thinkmate.com/System/HPX_XS8-2462
+[CC2.8xlarge]: http://aws.typepad.com/aws/2011/11/next-generation-cluster-computing-on-amazon-ec2-the-cc2-instance-type.html
+[Advanced Vector Extensions]: http://software.intel.com/en-us/avx/
+[Acer Monitors]: http://www.amazon.com/Acer-V223W-EJBD-22-Inch-Display/dp/B003D59FEQ/ref%3Dsr_1_1?ie%3DUTF8&qid%3D1337622028&sr%3D8-1
+[Rosewill RK-9000 with Cherry Blue]: http://www.amazon.com/Rosewill-Mechanical-Keyboard-RK-9000-Cherry/dp/B004F38Y7Y/ref%3Dsr_1_2?s%3Delectronics&ie%3DUTF8&qid%3D1337621996&sr%3D1-2
+[Microsoft Natural Keyboard Pro 4000]: http://www.microsoft.com/hardware/en-us/p/natural-ergonomic-keyboard-4000
+[Logitech G400]: http://www.amazon.com/Logitech-Optical-Gaming-High-Precision-910-002277/dp/B0055QZ216/ref%3Dsr_1_2?ie%3DUTF8&qid%3D1337621829&sr%3D8-2
+[Dad]: http://www.jeff-barr.com/
+[HP DV7t laptop]: http://www.hp.com/united-states/campaigns/holiday-beats/dv7t.html
+[Cooler Master Notepal X2]: http://www.amazon.com/Cooler-Master-Notepal-Notebook-R9-NBC-4WAK-GP/dp/B002MU1ZRS/ref%3Dsr_1_6?ie%3DUTF8&qid%3D1337632761&sr%3D8-6
+[Motorola Droid 3]: http://www.motorola.com/Consumers/US-EN/Consumer-Product-and-Services/Mobile-Phones/DROID-3-by-MOTOROLA-US-EN
+[Amazon Kindle Touch]: http://www.amazon.com/Kindle-Touch-e-Reader-Touch-Screen-Wi-Fi-Special-Offers/dp/B005890G8Y/ref%3Dsr_tr_sr_3?ie%3DUTF8&qid%3D1337632858&sr%3D8-3
+[Sennheiser HD201 headphones]: http://www.amazon.com/Sennheiser-HD201-Lightweight-Over-Ear-Headphones/dp/B0007XJSQC/ref%3Dsr_1_cc_1?s%3Daps&ie%3DUTF8&qid%3D1337632884&sr%3D1-1-catcorr
+[National Brand Computation Notebooks]: http://www.amazon.com/National-Computation-Notebook-Inches-43648/dp/B00007LV4B/ref%3Dsr_1_cc_3?s%3Daps&ie%3DUTF8&qid%3D1337622132&sr%3D1-3-catcorr
+[Pilot Precise Grip, Bold Point]: http://www.amazon.com/Pilot-Precise-Rolling-Assorted-28934/dp/B0058NN9NY/ref%3Dsr_1_2?s%3Doffice-products&ie%3DUTF8&qid%3D1337622193&sr%3D1-2
+
+
+## 4) And what software?
+The majority of my time is spent in [Emacs](http://www.gnu.org/software/emacs/), as that works for writing code, papers, plotting, and most other ways I interact with a computer. A few years ago I decided that I would always try to invest some time into learning my tools, and that tool has mostly been Emacs. To mention some specific Emacs modes, I use [AuCTeX] and [RefTeX] mode for authoring papers, [org-mode] for TODO lists and READMEs, [org2blog] to publish blog posts and pages (including this one), ECB for navigating projects, erc for IRC chat, gtags-mode with GNU Global for finding stuff, cua-mode for rectangular text manipulations, and probably a many other modes. Conkeror is a Firefox-based web browser which has Emacs-like keyboard shortcuts and a REPL. My operating system of choice is Ubuntu Linux using Gnome3. I don't understand all of the negative press about Unity, but I prefer Gnome3. I like the concept of being able to make an infinitely long stack of new workspaces.   I write a lot of code as well. The numerical stuff is done in C++, and I use a set of templates called [Eigen] for working with matrices. Eigen is fantastic because it can link against Intel's [MKL], which has optimized versions of BLAS and LAPACK for playing with matrices. <!-- After I develop, I use [EC2] to get the work done. My typical framework is: -->
+
+<!--   * write a binary which solves a model for one set of parameters -->
+<!--   * take parameters over the command line -->
+<!--   * solve -->
+<!--   * simulate based on those parameters -->
+<!--   * collect statistics based on the simulation -->
+<!--   * dump these statistics to a CSV file -->
+
+<!--   To run this binary over many different sets of parameters in parallel, I -->
+<!-- have Python scripts that submit tasks to an [SQS] queue. I have a bootstrap -->
+<!-- script that my EC2 instances use that do the following: -->
+
+<!--   * get the lastest binary from [S3] -->
+<!--   * check the SQS queue -->
+<!--   * If a task is there, solve it -->
+<!--   * Push results to S3 -->
+<!--   * If there are a few consecutive reads with no tasks, shut down -->
+
+<!--   This is a simple setup but I have performed run tens of thousands of tasks -->
+<!-- this way and it seems to work. -->
+
+<!--   I store my code in [Bitbucket], mostly using mercurial but I am learning -->
+<!-- git. Before checking in, I use [kdiff3] to see what changed. --> 
+
+I use the optimization routines in the [GNU Scientific Library].  I use R very often for processing and plotting the results of my simulations. For plotting, I use [ggplot2](http://had.co.nz/ggplot2/). My Summer 2012 project is to teach myself GPU programming in CUDA. I use the Intel C/C++ compilers as well as [Intel Parallel Studio XE] (specifically VTune Amplifier) to make sure I am getting full utilization out of all cores. To use all of the cores, I use OpenMP.   My music comes in on [Spotify] or occasionally [Pandora].
+
+  [Emacs]: http://www.gnu.org/software/emacs/
+  [Conkeror]: http://www.conkeror.org/
+  [PuTTY]: http://www.chiark.greenend.org.uk/~sgtatham/putty/
+  [JabRef]: http://jabref.sourceforge.net/
+  [Evince]: http://projects.gnome.org/evince/
+  [AuCTeX]: http://www.gnu.org/software/auctex/
+  [RefTeX]: http://www.gnu.org/software/auctex/reftex.html
+  [org-mode]: http://orgmode.org/
+  [org2blog]: https://github.com/punchagan/org2blog
+  [Eigen]: http://eigen.tuxfamily.org/index.php?title%3DMain_Page
+  [MKL]: http://software.intel.com/en-us/articles/intel-mkl/
+  [EC2]: http://aws.amazon.com/ec2/
+  [SQS]: http://aws.amazon.com/sqs/
+  [S3]: http://aws.amazon.com/s3/
+  [Bitbucket]: https://bitbucket.org/stevejb/
+  [kdiff3]: http://kdiff3.sourceforge.net/
+  [GNU Scientific Library]: http://www.gnu.org/software/gsl/
+  [Intel Parallel Studio XE]: http://software.intel.com/en-us/articles/intel-parallel-studio-xe/
+  [Spotify]: http://www.spotify.com
+  [Pandora]: http://www.pandora.com/
+
+
+## 5) What would be your dream setup?
+At some point I think I would like a wireless mouse. Unlimited [AWS] credit would be cool. At some point in the future, I would like to hire some ergonomics consultant to help place my monitors and desk in a way that I minimize fatigue. Otherwise, I think I am quite close to my dream setup.
+
+[faster internet connection]: http://en.wikipedia.org/wiki/Optical_Carrier_transmission_rates#OC-192_.2F_STM-64_.2F_10G_SONET
+[AWS]: http://aws.amazon.com/
+[credit]: http://aws.amazon.com/awscredits/
+
