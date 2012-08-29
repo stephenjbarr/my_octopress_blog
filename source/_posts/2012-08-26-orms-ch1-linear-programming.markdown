@@ -72,6 +72,6 @@ S 3 200    0  -5.0     5    0       NA
 
 The solveLP command solves problems of the form 
 
-$$ \min ~ cx ~ \mbox{s.t.} Ax \leq b ~\mbox{and}~ x \geq 0 $$
+$$ \min ~ cx ~ \mbox{s.t.} Ax \leq b ~~\mbox{and}~~ x \geq 0 $$
 
 Most of the rest of the chapter is about getting other problems into this form. It was a good chapter and was mostly review. Still, I hadn't thought explicitly about this in a while, so it was nice to review.
