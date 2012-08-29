@@ -10,7 +10,7 @@ In a previous post, I mentioned that I was working through the [*Operations Rese
 
 Let's do a simple example in R, based on Example 1.2 of chapter 1. The LP is defined in the comments. To solve these simple LPs in R, I am using the [linprog package](http://cran.r-project.org/web/packages/linprog/linprog.pdf).
 
-``` r Code to Demonstrate linprog library
+{% codeblock Code to Demonstrate linprog library lang:r %}
 library(linprog)
 
 ##
@@ -34,12 +34,10 @@ Amat <- matrix( c(2,1,
 
 solveLP(cvec, bvec, Amat, maximum=TRUE)
 
-```
+{% endcodeblock %}
 
 This will yield the following output
-``` r Results of linprog for Example Linear Program
-
-Results of Linear Programming / Linear Optimization
+{% codeblock Results of Linear Programming / Linear Optimization lang:r %}
 
 Objective function (Maximum): 13500 
 
@@ -70,11 +68,10 @@ S 1   0    0  -Inf     5   -5      300
 S 2   0    0  -Inf     5   -5      200
 S 3 200    0  -5.0     5    0       NA
 
-```
+{% endcodeblock %}
 
 The solveLP command solves problems of the form 
-<div markdown="0">
-\[ \min ~ cx ~ \mbox{s.t.} Ax \leq b ~\mbox{and}~ x \geq 0 \]
-</div>
+
+$$ \min ~ cx ~ \mbox{s.t.} Ax \leq b ~\mbox{and}~ x \geq 0 $$
 
 Most of the rest of the chapter is about getting other problems into this form. It was a good chapter and was mostly review. Still, I hadn't thought explicitly about this in a while, so it was nice to review.
