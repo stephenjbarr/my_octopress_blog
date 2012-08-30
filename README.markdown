@@ -1,3 +1,7 @@
+## My Changes
+
+1. The main change is to the kramdown parser. This requires a `gem install kramdown`.
+
 ## What is Octopress?
 
 Octopress is [Jekyll](https://github.com/mojombo/jekyll) blogging at its finest.
