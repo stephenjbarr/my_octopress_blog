@@ -1,0 +1,192 @@
+<p>In this post, I explain my general setup for running jobs on EC2. Since a picture is worth 1000 words, lets start with a picture and use a few words to fill in the gaps.</p>
+
+<p><img alt='http://steve.planetbarr.com/wordpress/wp-content/uploads/2012/05/wpid-my_workflow.png' src='http://steve.planetbarr.com/wordpress/wp-content/uploads/2012/05/wpid-my_workflow.png' /></p>
+
+<p>I start working on <a href='http://steve.planetbarr.com/wordpress/?page_id=8'>my dev box</a>, and in one workflow scenario I will have a model that I will want to run across many different parameterizations. For example, I may want to run the model for many different random parameterizations to get an idea of which parameters are driving which behaviors in the data.</p>
+
+<p>Say my model is an executable called <code>model</code>, and it takes command line parameters in the form:</p>
+
+<pre><code>model --alpha=&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;0.5123&#39;&lt;/span&gt; --beta=&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;0.95&#39;&lt;/span&gt; --N=1000 </code></pre>
+
+<p>where <code>alpha</code> and <code>beta</code> are the parameters of interest. According to the diagram, the first step is to &#8220;Push Tasks&#8221; to SQS.</p>
+
+<h2 id='making_the_sqs_tasks'>Making the SQS tasks</h2>
+
+<p><strong>Some Python to show the general idea:</strong></p>
+
+<pre><code>&lt;span style=&quot;color: #268bd2;&quot;&gt;uuid_g&lt;/span&gt; = &lt;span style=&quot;color: #859900;&quot;&gt;str&lt;/span&gt;(uuid.uuid4()) &lt;span style=&quot;font-style: italic;&quot;&gt;### uuid_g (group uuid) gets set outside loop&lt;/span&gt;
+&lt;span style=&quot;color: #268bd2;&quot;&gt;s3bucket&lt;/span&gt; = &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;my_bucket&quot;&lt;/span&gt;     &lt;span style=&quot;font-style: italic;&quot;&gt;### s3bucket getrs set outside loop&lt;/span&gt;
+
+&lt;span style=&quot;color: #859900;&quot;&gt;for&lt;/span&gt; i &lt;span style=&quot;color: #859900;&quot;&gt;in&lt;/span&gt; &lt;span style=&quot;color: #859900;&quot;&gt;range&lt;/span&gt;(0,N):    
+    &lt;span style=&quot;font-style: italic;&quot;&gt;## paramstr gets set somewhere here, unique to i&lt;/span&gt;
+    &lt;span style=&quot;font-style: italic;&quot;&gt;## uuid_i is unique to i&lt;/span&gt;
+    queuemessage = paramstr + &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;,&quot;&lt;/span&gt; + s3bucket + &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;,&quot;&lt;/span&gt; + uuid_i + &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;,&quot;&lt;/span&gt; + uuid_g
+    m = Message()
+    m.set_body(queuemessage)
+    status = q.write(m)</code></pre>
+
+<p>In the above code, there are <code>N</code> different randomly generated parameterizations, and each one gets its on SQS tasks. At the end of this post, I show a simple way of generating a matrix of random parameterizations. There are a few important things to realize from this:</p>
+
+<p>1. The message (called <code>queuemessage</code>) is simply a comma separated string of parameter values 2. Each task gets its own uuid (called <code>uuid_i</code>). Use uuid4. 3. Each group of tasks gets its own uuid (called <code>uuid_g</code>). Use uuid4.</p>
+
+<p>Full code that does this for one of my projects is available <a href='https://bitbucket.org/stevejb/is-solver/src/48c35b61cc18/awslauncher/createISS_compstatic_tasks.py'>here</a>.</p>
+
+<h2 id='given_a_populated_sqs_queue_do_the_tasks_in_the_cloud'>Given a populated SQS queue, do the tasks in the cloud</h2>
+
+<p>In this section, I show what I do for running the tasks. Each of my instances on EC2 (denoted CC2 #X) has a bootstrap script that launches a Python client. The client runs the following loop</p>
+
+<p>1. Check the SQS queue 2. <strong>If</strong> there are tasks in the queue 1. Read the message &#8220;0.5,0.95,eeba09f3,552a6f8c&#8221; 2. Construct the string</p>
+
+<pre><code>./model --alpha=0.5 --beta=0.95 --output_base=&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;eeba09f3/552a6f8c&#39;&lt;/span&gt;
+
+
+
+3. Exec the string 
+4. Look for results in `eeba09f3/552a6f8c___results.csv`. Upload this to s3. </code></pre>
+
+<p>3. Else, there are no tasks in the queue. Shutdown.</p>
+
+<p><code>model</code> takes the parameter <code>output_base</code> and all files that <code>model</code> generates will be prefixed by this. By making this a combination of <code>${uuid_g}/${uuid_i}___</code>, you can simply dump all of the output into an s3 bucket and not worry about collisions. <code>model</code> should also create a file called <code>${uuid_g}/${uuid_i}___params.csv</code> which records the parameters it was called with, including <code>alpha</code>, <code>beta</code>, and any other commands. <code>model</code> should also make a file called <code>${uuid_g}/${uuid_i}___success.txt</code> at the very end of the program, if everything went successfully. The non-existence of this file implies a crash. <code>${uuid_g}/${uuid_i}___log.txt</code> will probably be useful as well. I have also found it extremely useful to have a <code>--verbose</code> mode to the model which outputs all intermediate values (e.g. <code>${uuid_g}/${uuid_i}___matrix_A.csv</code>). The output can go somewhere like <code>${uuid_g}/${uuid_i}___output.csv</code></p>
+
+<p>An example client that does this is located <a href='https://bitbucket.org/stevejb/is-solver/src/48c35b61cc18/awslauncher/ISSClient.py'>here</a>, written in Python and using Boto to interface with SQS and S3.</p>
+
+<h2 id='back_on_the_dev_box_getting_the_results'>Back on the dev box, getting the results.</h2>
+
+<p>To actually get the results to my dev box, I use <code>s3cmd</code>, but <a href='https://github.com/pcorliss/s3cmd-modification'>a modified one that runs in parallel</a>.</p>
+
+<pre><code>s3cmd get --recursive --parallel --workers=24 s3://my_bucket/eeba09f3</code></pre>
+
+<p>Once I have the results locally, I want to load them into <a href='http://www.r-project.org/'>R</a>. The issue is, I have one giant directory <code>${uuid_g}</code> which has <code>N</code> <code>output.csv</code> files and just as many <code>param.csv</code> files. The first thing you can do is search for ones that have the <code>${uuid_g}/${uuid_i}___success.txt</code> file with grep, and make a list of the <code>${uuid_g}/${uuid_i}</code>. In my case, I simply looked for the word &#8220;SUCCESS&#8221; in the output.</p>
+
+<pre><code>grep -r &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;SUCCESS&quot;&lt;/span&gt; . | perl -ne &lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;$_ =~/(\/.*)___/; print $1 . &quot;\n&quot;&#39;&lt;/span&gt; &gt; solved_good.txt</code></pre>
+
+<p>should get you most of the way there. From here, it is simply a matter of iterating over each line of <code>solved_good.txt</code> and reading in the files. Some <code>R</code> code in the appendix should be helpful.</p>
+
+<h2 id='summary'>Summary</h2>
+
+<p>In this post, I have shown a useful way of pushing jobs to AWS and getting the results back. I have also shown a useful way of structuring your core task such that it is amenable to being run in parallel. Remember the following:</p>
+
+<p>1. <code>model</code> takes as input parameters and a base filename 2. base filename is <code>${uuid_g}/${uuid_i}</code> 3. <code>model</code> creates at least the following files: 1. <code>${uuid_g}/${uuid_i}___success.txt</code> 2. <code>${uuid_g}/${uuid_i}___output.csv</code> 3. <code>${uuid_g}/${uuid_i}___params.csv</code></p>
+
+<p>4. The client which runs on the EC2 machines checks SQS for a task, processes it, dumps the results to s3 5. When you want to analyze, get from s3. Aggregate the results. And go for it.</p>
+
+<p>Enjoy and happy computing!</p>
+
+<h2 id='code_appendix'>Code Appendix</h2>
+
+<h3 id='generate_a_numpy_matrix_of_random_parameterizations_given_an_upper_and_lower_bound_for_each_parameter'>Generate a numpy matrix of random parameterizations, given an upper and lower bound for each parameter</h3>
+
+<pre><code>&lt;span style=&quot;color: #859900;&quot;&gt;import&lt;/span&gt; numpy &lt;span style=&quot;color: #859900;&quot;&gt;as&lt;/span&gt; np
+&lt;span style=&quot;color: #859900;&quot;&gt;from&lt;/span&gt; collections &lt;span style=&quot;color: #859900;&quot;&gt;import&lt;/span&gt; OrderedDict  &lt;span style=&quot;font-style: italic;&quot;&gt;## this requires Python 2.7&lt;/span&gt;
+
+&lt;span style=&quot;color: #268bd2;&quot;&gt;paramDict&lt;/span&gt; = OrderedDict();
+paramDict[&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;theta&#39;&lt;/span&gt;]     = np.array([0.5,0.9])
+paramDict[&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;rho&#39;&lt;/span&gt;]       = np.array([0.15,0.95])
+paramDict[&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;sigma_v&#39;&lt;/span&gt;]   = np.array([0.01,0.6])
+paramDict[&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;a&#39;&lt;/span&gt;]         = np.array([0.001, 0.4])
+paramDict[&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;gamma&#39;&lt;/span&gt;]     = np.array([0.001, 0.05])
+paramDict[&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;s&#39;&lt;/span&gt;]         = np.array([0.0001,0.01])
+paramDict[&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;lambda_1&#39;&lt;/span&gt;]  = np.array([0.01, 0.5])
+paramDict[&lt;span style=&quot;color: #2aa198;&quot;&gt;&#39;lambda_2&#39;&lt;/span&gt;]  = np.array([0.0001, 0.01])
+
+&lt;span style=&quot;font-style: italic;&quot;&gt;########################################&lt;/span&gt;
+&lt;span style=&quot;color: #859900;&quot;&gt;def&lt;/span&gt; &lt;span style=&quot;color: #268bd2;&quot;&gt;genRandomRuns&lt;/span&gt;(paramDict, Mruns):
+  params = paramDict.keys()
+  plen = &lt;span style=&quot;color: #859900;&quot;&gt;len&lt;/span&gt;(params)
+
+  runs_matrix = np.empty((Mruns, plen))
+  &lt;span style=&quot;color: #859900;&quot;&gt;for&lt;/span&gt; i &lt;span style=&quot;color: #859900;&quot;&gt;in&lt;/span&gt; &lt;span style=&quot;color: #859900;&quot;&gt;range&lt;/span&gt;(Mruns):
+    &lt;span style=&quot;color: #859900;&quot;&gt;for&lt;/span&gt; pp &lt;span style=&quot;color: #859900;&quot;&gt;in&lt;/span&gt; &lt;span style=&quot;color: #859900;&quot;&gt;range&lt;/span&gt;(plen):
+      ktemp = params[pp]
+      kary = paramDict[ktemp]
+      &lt;span style=&quot;color: #859900;&quot;&gt;if&lt;/span&gt; &lt;span style=&quot;color: #859900;&quot;&gt;len&lt;/span&gt;(kary) == 1:
+        runs_matrix[i,pp] = kary[0]
+      &lt;span style=&quot;color: #859900;&quot;&gt;else&lt;/span&gt;:
+        lbound = kary[0]
+        ubound = kary[1]
+        runs_matrix[i,pp] = np.random.uniform(low=lbound, high=ubound)
+
+  &lt;span style=&quot;color: #859900;&quot;&gt;return&lt;/span&gt;(runs_matrix)
+&lt;span style=&quot;font-style: italic;&quot;&gt;########################################&lt;/span&gt;
+
+&lt;span style=&quot;color: #268bd2;&quot;&gt;ptable&lt;/span&gt; = genRandomRuns(paramDict, 10000)</code></pre>
+
+<h3 id='read_many_outputcsv_files_in_r'>Read many output.csv files in R</h3>
+
+<pre><code>&lt;span style=&quot;color: #93a1a1; font-style: italic;&quot;&gt;## &lt;/span&gt;&lt;span style=&quot;font-style: italic;&quot;&gt;set the root directory&lt;/span&gt;
+rootpath = &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;/home/stevejb/mnt/csdata/barr_iss_storage___test/csdtr2&quot;&lt;/span&gt;
+fname = &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;solved_good_cs.txt&quot;&lt;/span&gt;
+dfile.path = paste(rootpath, fname, sep=&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;/&quot;&lt;/span&gt;)
+files = read.table(dfile.path, header=&lt;span style=&quot;color: #b58900;&quot;&gt;FALSE&lt;/span&gt;, as.is=&lt;span style=&quot;color: #b58900;&quot;&gt;TRUE&lt;/span&gt;)
+filebases.full = paste(rootpath, files[,1], sep=&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;&quot;&lt;/span&gt;)
+
+&lt;span style=&quot;color: #93a1a1; font-style: italic;&quot;&gt;## &lt;/span&gt;&lt;span style=&quot;font-style: italic;&quot;&gt;make a list of distinct uuid_g&#39;s and corresponding uuid_i&#39;s&lt;/span&gt;
+guidlist = list()
+uuidlist = list()
+flbase = files[,1]
+ugdf = data.frame()
+&lt;span style=&quot;color: #859900;&quot;&gt;for&lt;/span&gt;(i &lt;span style=&quot;color: #859900;&quot;&gt;in&lt;/span&gt; 1:length(flbase)) {
+  tmp = strsplit(files[i,1],&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;/&quot;&lt;/span&gt;)
+  guidlist[[i]] = tmp[[1]][2]
+  uuidlist[[i]] = tmp[[1]][3]
+  ugdf[i,1] =   guidlist[[i]]
+  ugdf[i,2] =   uuidlist[[i]]
+}
+guidlist = unique(unlist(guidlist))
+uuidlist = (unlist(uuidlist))
+colnames(ugdf) &lt;span style=&quot;color: #2aa198;&quot;&gt;&lt;-&lt;/span&gt; c(&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;guid&quot;&lt;/span&gt;, &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;uuid&quot;&lt;/span&gt;) 
+
+cslist = list()
+
+&lt;span style=&quot;color: #93a1a1; font-style: italic;&quot;&gt;## &lt;/span&gt;&lt;span style=&quot;font-style: italic;&quot;&gt;for each uuid_g, read every uuid_i that corresponds&lt;/span&gt;
+&lt;span style=&quot;color: #93a1a1; font-style: italic;&quot;&gt;## &lt;/span&gt;&lt;span style=&quot;font-style: italic;&quot;&gt;(one uuid_g to many uuid_i&#39;s)&lt;/span&gt;
+
+&lt;span style=&quot;color: #859900;&quot;&gt;for&lt;/span&gt;(i &lt;span style=&quot;color: #859900;&quot;&gt;in&lt;/span&gt; 1:length(guidlist)) {
+
+  guid.i = guidlist[i]
+  uuids = subset(ugdf, guid==guid.i)$uuid
+  datalist = list()
+  datalist.ddw = list()
+
+  basefiles   = paste(rootpath, guid.i, uuids, sep=&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;/&quot;&lt;/span&gt;) 
+  paramfiles    = paste(basefiles, &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;___params.csv&quot;&lt;/span&gt;, sep=&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;&quot;&lt;/span&gt;)
+  outfiles   = paste(basefiles, &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;___output.csv&quot;&lt;/span&gt;, sep=&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;&quot;&lt;/span&gt;)
+
+  count = 1
+  &lt;span style=&quot;color: #859900;&quot;&gt;for&lt;/span&gt;(ii &lt;span style=&quot;color: #859900;&quot;&gt;in&lt;/span&gt; 1:length(paramfiles)) {
+
+
+    OUTEXISTS = file.exists(outfiles[ii])
+    PARAMEXISTS = file.exists(paramfiles[ii])
+
+    &lt;span style=&quot;color: #859900;&quot;&gt;if&lt;/span&gt;( !( OUTEXISTS &amp; PARAMEXISTS)) {
+      print(&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;One file is missing&quot;&lt;/span&gt;)
+      &lt;span style=&quot;color: #859900;&quot;&gt;next&lt;/span&gt;
+    }
+
+    outlines =  length(readLines(outfiles[ii]))
+    paramlines = length(readLines(paramfiles[ii]))
+
+    &lt;span style=&quot;color: #859900;&quot;&gt;if&lt;/span&gt;( outlines == 0 |
+       paramlines == 0) {
+      &lt;span style=&quot;color: #859900;&quot;&gt;next&lt;/span&gt;
+    }
+
+
+    param.ii = read.csv(paramfiles[ii], header=&lt;span style=&quot;color: #b58900;&quot;&gt;TRUE&lt;/span&gt;)
+    out.ii = read.csv(outfiles[ii], header=&lt;span style=&quot;color: #b58900;&quot;&gt;FALSE&lt;/span&gt;)
+
+    &lt;span style=&quot;color: #93a1a1; font-style: italic;&quot;&gt;## &lt;/span&gt;&lt;span style=&quot;font-style: italic;&quot;&gt;something ad-hoc to bind the matrices together into&lt;/span&gt;
+    &lt;span style=&quot;color: #93a1a1; font-style: italic;&quot;&gt;## &lt;/span&gt;&lt;span style=&quot;font-style: italic;&quot;&gt;one long named row&lt;/span&gt;
+    m2df = data.frame(out.ii[,2])
+    rownames(m2df) = out.ii[,1]
+    rowdf = cbind(param.ii, t(m2df))  
+    datalist[[count]] = rowdf
+
+    count = count + 1             
+  }
+
+  csdf = do.call(&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;rbind&quot;&lt;/span&gt;, datalist)
+  cslist[[i]] = csdf
+
+}</code></pre>

@@ -1,0 +1,229 @@
+<h1 id='table_of_contents'>Table of Contents</h1>
+
+<p>* 1 Introduction</p>
+
+<p>* 2 Why would you combine R and Eigen (the 80/20 rule)</p>
+
+<p>* 3 Calling Eigen from R</p>
+
+<pre><code>* 3.1 Prerequisites
+
+
+* 3.2 Steps
+
+
+* 3.3 Where to go from here</code></pre>
+
+<p>* 4 Calling R from a C++ code</p>
+
+<p>* 5 Other References</p>
+
+<h2 id='1_introduction'>1 Introduction</h2>
+
+<p>Greetings and sorry for the long delay in blog posts. Today, I want to discuss combining Eigen and R. <a href='http://eigen.tuxfamily.org/index.php?title=Main_Page'>Eigen</a> is my favorite C++ library for working with matrices and vectors. The advantages of Eigen are</p>
+
+<p>* It is fast</p>
+
+<p>* It can link against Intel&#8217;s MKL, making it very fast</p>
+
+<p>* The community is good, particularly the <a href='http://forum.kde.org/viewforum.php?f=74'>forums</a> and the IRC channel, #eigen on <a href='http://freenode.net/'>freenode</a></p>
+
+<p>However, not everyone uses C++ and Eigen. A large part of the academic community uses <a href='http://cran.r-project.org/'>R</a> because it isreasonably fast, interpreted, and generally gets out of the way and lets the programmer get the job done. One of the downsides of R is that it is not so fast for numerical computing.</p>
+
+<h2 id='2_why_would_you_combine_r_and_eigen_the_8020_rule'>2 Why would you combine R and Eigen (the 80/20 rule)</h2>
+
+<p>In code, one often finds that 80% of the runtime is spent in 20% of the code. This is actually a form of Pareto&#8217;s <a href='http://en.wikipedia.org/wiki/Pareto_principle'>80/20 rule</a>. What this means is that it does not make sense to optimize ALL of the code. Start with the few lines that are taking the most amount of time.</p>
+
+<p>Also, one needs to remember that what you are trying to minimize is not runtime, but the sum of development time and runtime. In most cases, it is faster to develop in <code>R</code> than in C++. Additionally, there may be an existing codebase that you want to utilize, and that codebase may be in R. Thus, the developer is often left with one of the following choices</p>
+
+<p>1. Rewrite the existing R code in C++ (using Eigen) because you want to make it faster</p>
+
+<p>2. Rewrite the existing C++ code in R because there is an R module that does <em>exactly</em> what you want, and you don&#8217;t want to rewrite this in C++</p>
+
+<p>3. Write a modular combination of R and C++ scripts, plus some &#8220;glue&#8221; scripts to tie them together. For low IO applications (where the data being communicated between the modules is small) this can be reasonable, although you spend a lot of time parsing and messing with &#8220;glue&#8221; scripts.</p>
+
+<p>With <code>Rcpp</code>, <code>RInside</code>, and <code>RCppEigen</code>, you have two new options</p>
+
+<p>1. Take the existing R code and embed a fast piece of C++/Eigen (<code>Rcpp</code>, <code>RcppEigen</code>)</p>
+
+<p>2. Take the existing C++ code and embed an R instance (<code>Rcpp</code>, <code>RcppEigen</code>, <code>RInside</code>)</p>
+
+<p>I recently figured out exactly how to do this, and wanted to document it for my own reference and perhaps this will be useful for someone else as well.</p>
+
+<h2 id='3_calling_eigen_from_r'>3 Calling Eigen from R</h2>
+
+<h3 id='31_prerequisites'>3.1 Prerequisites</h3>
+
+<p>1. Install R</p>
+
+<p>2. From within R, do</p>
+
+<pre><code>install.packages(c(&quot;Rcpp&quot;, &quot;RcppEigen&quot;, &quot;inline&quot;))
+library(RcppEigen)
+library(inline)</code></pre>
+
+<h3 id='32_steps'>3.2 Steps</h3>
+
+<p>The following example comes from the excellent <a href='http://cran.r-project.org/web/packages/RcppEigen/vignettes/RcppEigen-intro-nojss.pdf'>RcppEigen vignette</a>. What we will be doing is making an Eigen verison of the transpose function. It is hard to imagine a case where <code>t()</code> is too slow, but the example should work. The C++ code for the transpose is</p>
+
+<pre><code>using Eigen::Map;
+using Eigen::MatrixXi;
+
+// Map the integer matrix AA from R
+const Map&lt;MatrixXi&gt; A(as&lt;Map&lt;MatrixXi&gt; &gt;(AA));
+
+// evaluate and return the transpose of A
+const MatrixXi At(A.transpose());
+return wrap(At);</code></pre>
+
+<p>Go to your R session where you have loaded <code>RcppEigen</code> and <code>inline</code> and make the above program a string</p>
+
+<pre><code>transCpp = &#39;using Eigen::Map;
+using Eigen::MatrixXi;
+
+// Map the integer matrix AA from R
+const Map&lt;MatrixXi&gt; A(as&lt;Map&lt;MatrixXi&gt; &gt;(AA));
+
+// evaluate and return the transpose of A
+const MatrixXi At(A.transpose());
+return wrap(At);&#39;</code></pre>
+
+<p>Next, do the following in your <code>R</code> session</p>
+
+<pre><code>ftrans = cxxfunction(signature(AA=&quot;matrix&quot;), transCpp, plugin=&quot;RcppEigen&quot;, verbose=TRUE)</code></pre>
+
+<p>the <code>verbose=TRUE</code> is not necessary, but is definitely informative. You should get some output that looks like this</p>
+
+<pre><code>ftrans = cxxfunction(signature(AA=&quot;matrix&quot;), transCpp,
+  plugin=&quot;RcppEigen&quot;, verbose=TRUE)
+ftrans = cxxfunction(signature(AA=&quot;matrix&quot;), transCpp,
++   plugin=&quot;RcppEigen&quot;, verbose=TRUE)
+ &gt;&gt; setting environment variables: 
+PKG_LIBS =  -L/usr/lib/R/site-library/Rcpp/lib -lRcpp -Wl,-rpath,/usr/lib/R/site-library/Rcpp/lib
+
+ &gt;&gt; LinkingTo : RcppEigen, Rcpp
+CLINK_CPPFLAGS =  -I&quot;/usr/local/lib/R/site-library/RcppEigen/include&quot; -I&quot;/usr/lib/R/site-library/Rcpp/include&quot; 
+
+ &gt;&gt; Program source :
+
+   1 : 
+   2 : // includes from the plugin
+   3 : #include &lt;RcppEigen.h&gt;
+   4 : #include &lt;Rcpp.h&gt;
+   5 : 
+   6 : 
+   7 : #ifndef BEGIN_RCPP
+   8 : #define BEGIN_RCPP
+   9 : #endif
+  10 : 
+  11 : #ifndef END_RCPP
+  12 : #define END_RCPP
+  13 : #endif
+  14 : 
+  15 : using namespace Rcpp;
+  16 : 
+  17 : 
+  18 : // user includes
+  19 : 
+  20 : 
+  21 : // declarations
+  22 : extern &quot;C&quot; {
+  23 : SEXP file2c6d59d82c92( SEXP AA) ;
+  24 : }
+  25 : 
+  26 : // definition
+  27 : 
+  28 : SEXP file2c6d59d82c92( SEXP AA ){
+  29 : BEGIN_RCPP
+  30 : using Eigen::Map;
+  31 : using Eigen::MatrixXi;
+  32 : // Map the integer matrix AA from R
+  33 : const Map&lt;MatrixXi&gt; A(as&lt;Map&lt;MatrixXi&gt; &gt;(AA));
+  34 : // evaluate and return the transpose of A
+  35 : const MatrixXi At(A.transpose());
+  36 : return wrap(At);
+  37 : END_RCPP
+  38 : }
+  39 : 
+  40 : 
+Compilation argument:
+ /usr/lib/R/bin/R CMD SHLIB file2c6d59d82c92.cpp 2&gt; file2c6d59d82c92.cpp.err.txt 
+g++ -I/usr/share/R/include   -I&quot;/usr/local/lib/R/site-library/RcppEigen/include&quot; -I&quot;/usr/lib/R/site-library/Rcpp/include&quot;   -fpic  -O3 -pipe  -g -c file2c6d59d82c92.cpp -o file2c6d59d82c92.o
+g++ -shared -o file2c6d59d82c92.so file2c6d59d82c92.o -L/usr/lib/R/site-library/Rcpp/lib -lRcpp -Wl,-rpath,/usr/lib/R/site-library/Rcpp/lib -L/usr/lib/R/lib -lR
+&gt;</code></pre>
+
+<p>What happened is that the source shown by &#8220;Program source:&#8221; was generated automatically by the <code>cxxfunction</code>. This generated a simple C++ function with one function that takes a <code>SEXP</code> object called <code>AA</code> as input and returns a different <code>SEXP</code> as output. Within this function,</p>
+
+<p>* line 33 maps to SEXP called <code>AA</code> to an Eigen matrix called <code>A</code>.</p>
+
+<p>* line 35 takes <code>A</code>, and makes a new matrix called <code>At</code> from the transpose of <code>A</code></p>
+
+<p>* line 36 uses <code>Rcpp</code>&#8217;s wrap function take the Eigen matrix and transforms it into a <code>SEXP</code> to match the function signature</p>
+
+<p>It is then compiled using the <code>g++</code> string that is shown. From <code>R</code>, you can then make a matrix and try transposing it. E.g.</p>
+
+<pre><code>A = matrix(1:12, nrow=3)
+ftrans(A)</code></pre>
+
+<h3 id='33_where_to_go_from_here'>3.3 Where to go from here</h3>
+
+<p>Make Eigen functions to speed up the slow bits of your R code. Get familiar with what Eigen can do and how fast it is. Definitely read the <a href='http://cran.r-project.org/web/packages/RcppEigen/vignettes/RcppEigen-intro-nojss.pdf'>RcppEigen vignette</a>, and also the <a href='http://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=1&amp;ved=0CF8QFjAA&amp;url=http%3A%2F%2Fcran.r-project.org%2Fweb%2Fpackages%2FRcpp%2Fvignettes%2FRcpp-introduction.pdf&amp;ei=18AiUPGlL8ThiwLkhIGIAg&amp;usg=AFQjCNHU11d_pFYtCs_5gELew4rEYb6CwA&amp;sig2=J9zEEtuSzZyYQnzE5VX89g'>Rcpp: Seamless R and C++ Integration</a> paper</p>
+
+<h2 id='4_calling_r_from_a_c_code'>4 Calling R from a C++ code</h2>
+
+<p>You can also find yourself in the situation described above, namely &#8220;2. Take the existing C++ code and embed an R instance (<code>Rcpp</code>, <code>RcppEigen</code>, <code>RInside</code>)&#8221;. This will happen when you have some working C++ code, and want to add some functionality that already exists in R. To do this, you can use <a href='http://dirk.eddelbuettel.com/code/rinside.html'>RInsid</a>e to embed an R instance within a C++ program.</p>
+
+<pre><code>#include &lt;RcppEigen.h&gt;
+#include &lt;Rcpp.h&gt;
+#include &lt;RInside.h&gt;                            // for the embedded R via RInside
+
+using namespace Rcpp;
+using namespace Eigen;
+using namespace std;
+int main(int argc, char *argv[]) {
+
+    RInside R(argc, argv);                      // create an embedded R instance 
+    R.parseEval(&quot;set.seed(1)&quot;);
+
+    // Create a matrix in R
+    SEXP mytmp = R.parseEval(&quot;matrix(rnorm(12),nrow=3)&quot;);
+    std::cout &lt;&lt; &quot;Created a normal matrix in an embedded R instance&quot; &lt;&lt; std:: endl;   
+
+    // Transform it into an Eigen matrix
+    const Map&lt;MatrixXd&gt; mymat(as&lt;Map&lt;MatrixXd&gt; &gt;(mytmp));
+    cout &lt;&lt; mymat &lt;&lt; endl;
+
+}</code></pre>
+
+<p>There are a lot of good examples in the <code>inst/examples/standard/</code> folder of the <a href='http://cran.r-project.org/web/packages/RInside/index.html'>RInside package</a>. Plus, you will also need the Makefile. To compile this, I took a helpful hint from Dirk Eddelbuettel on the <a href='http://lists.r-forge.r-project.org/mailman/listinfo/rcpp-devel'>rcpp-devel mailing list</a>, and used the compile string from the call to <code>cxxfunction</code> to see what other file needed to be included. In my case, I added <code>-I/usr/local/lib/R/site-library/RcppEigen/include</code> to the <code>CPPFLAGS</code> line of the Makefile in order to get the makefile to link correctly. Then, simply typing <code>make</code> at the command prompt will cause the program to compile and link correctly.</p>
+
+<p>Calling the executable should yield</p>
+
+<pre><code>stevejb@ursamajor:~/Projects/big_data_sim_mle/simple_smle/R_inside_version$ ./sjb_rinside3 
+Created a normal matrix in an embedded R instance
+-0.626454   1.59528  0.487429 -0.305388
+ 0.183643  0.329508  0.738325   1.51178
+-0.835629 -0.820468  0.575781  0.389843</code></pre>
+
+<p>If you go to an R console and do</p>
+
+<pre><code>&gt; set.seed(1)
+&gt; matrix(rnorm(12),nrow=3)
+           [,1]       [,2]      [,3]       [,4]
+[1,] -0.6264538  1.5952808 0.4874291 -0.3053884
+[2,]  0.1836433  0.3295078 0.7383247  1.5117812
+[3,] -0.8356286 -0.8204684 0.5757814  0.3898432</code></pre>
+
+<p>you get the same matrix.</p>
+
+<h2 id='5_other_references'>5 Other References</h2>
+
+<p>* <a href='http://comments.gmane.org/gmane.comp.lang.r.rcpp/3587'>This discussion on Rcpp-devel</a></p>
+
+<p>Date: 2012-08-08</p>
+
+<p>Author: Stephen Jeffrey Barr</p>
+
+<p>Org version 7.8.11 with Emacs version 24</p>
+
+<p><a href='http://validator.w3.org/check?uri=referer'>Validate XHTML 1.0</a></p>

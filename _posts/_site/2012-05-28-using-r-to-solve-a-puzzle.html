@@ -1,0 +1,28 @@
+<p>1. The product of the first two digits is 24 2. The forth digit is half of the second digit 3. The sum of the last two digits is the same as the sum of the first and third digits 4. The sum of all digits is 26 5. Not all the digits are unique</p>
+
+<p>I wanted to see if I could use <code>R</code> to solve this. It turns out, it is pretty easy. The key insight is to think of the numbers 1 to 99999 as a 5x99999 matrix. Numbers less than 10,000 need to be padded with zeros in order to fit.</p>
+
+<p>The code is as follows:</p>
+
+<pre><code>x = 1:99999
+xbig = strsplit(formatC(x, width=5, flag=&lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;0&quot;&lt;/span&gt;), &lt;span style=&quot;color: #2aa198;&quot;&gt;&quot;&quot;&lt;/span&gt;)
+xdf = do.call(rbind, xbig)
+xnum = matrix(as.numeric(xdf), ncol=5)
+
+cond1 = (xnum[,1] + xnum[,3] == 24)
+cond2 = (xnum[,4] == (xnum[,2]/2))
+cond3 = ( (xnum[,4] + xnum[,5]) == (xnum[,1] + xnum[,3]))
+cond4 = (rowSums(xnum) == 26)
+
+c14 = (cond1 &amp; cond2 &amp; cond3 &amp; cond4)
+xnum[c14,]
+
+candidates = xnum[c14,]
+cond5 = apply(candidates, 1, &lt;span style=&quot;color: #859900;&quot;&gt;function&lt;/span&gt;(x) length(unique(x)) &lt; 5)
+candidates[cond5,] </code></pre>
+
+<p>I made a bunch of intermediate objects so it is easy to inspect what each line is doing. The <code>formatC</code> command does the 0-padding for each element of the vector <code>x</code>. <code>strsplit</code> gives a list of character vectors where the 1st vector looks like <code>c(&quot;0&quot;,&quot;0&quot;,&quot;0&quot;,&quot;0&quot;,&quot;1&quot;)</code>. I then convert it back into a numerical matrix <code>xnum</code>, and from there it is easy to apply the conditions.</p>
+
+<p>The application of conditions 1-4 lead to 3 candidates. Applying condition 5 eliminates the ones where all digits are unique.</p>
+
+<p>I do not want to give away the answer, as that would be against the policy of the puzzle. Give the code a try!</p>
