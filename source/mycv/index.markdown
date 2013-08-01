@@ -13,7 +13,8 @@ footer: true
 + Stephen J. Barr
 + Website: [steve.planetbarr.com](http://steve.planetbarr.com)
 + Phone: 425 516 5012
-+ Current Institution: Foster School of Business, University of Washington
++ Current Institution: Foster School of Business, University of Washington 
++ My GPG Key
 
 ## Current Occupation
 
