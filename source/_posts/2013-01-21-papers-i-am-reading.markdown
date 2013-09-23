@@ -3,7 +3,7 @@ layout: post
 title: "Papers I Am Reading, 21 Jan 2013"
 date: 2013-01-21 01:34
 comments: true
-categories: papers, research
+categories: [papers, research]
 ---
 
 This is the beginning of a weekly series of posts talking about what papers I am reading for the coming week. They will be roughly divided into research areas, although part of being on the frontier is that new research may not fit into existing classifications. On the other hand, the papers may seem to fit into multiple seemingly unrelated categories, with emphasis on the word *seemingly*. 

@@ -3,7 +3,7 @@ layout: post
 title: "'Bayesian Reasoning and Machine Learning' by David Barber"
 date: 2013-01-13 16:08
 comments: true
-categories: machine_learning, book
+categories: [machine-learning, book, statistics, bayesian]
 ---
 
 {% img  https://s3.amazonaws.com/stevejb_blog_content/brml_cover.gif %}

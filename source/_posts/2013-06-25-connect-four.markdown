@@ -3,7 +3,7 @@ layout: post
 title: "Connect Four, Kids, and Math"
 date: 2013-06-25 13:06
 comments: true
-categories: games, kids, math
+categories: [games, kids, math, education]
 ---
 
 <!-- # Connect Four and Math for Children -->

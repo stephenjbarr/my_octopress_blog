@@ -3,7 +3,7 @@ layout: post
 title: "Ray Kurzweil"
 date: 2013-08-05 08:51
 comments: true
-categories: 
+categories: [video, futurism]
 ---
 
 I had this going while working the other day. Very interesting. 

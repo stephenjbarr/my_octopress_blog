@@ -3,7 +3,7 @@ layout: post
 title: "Book Review: 'A.I. Apocalypse' by William Hertling"
 date: 2012-08-14 22:59
 comments: true
-categories: 
+categories: book-review
 published: true
 ---
 

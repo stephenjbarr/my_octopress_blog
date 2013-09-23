@@ -5,6 +5,7 @@ layout: post
 slug: using-r-to-solve-a-puzzle
 title: Using R to Solve a Puzzle
 wordpress_id: 28
+categories: R
 ---
 
 I recently saw a puzzle that had asked to find a 5 digit number that met the following criteria: 

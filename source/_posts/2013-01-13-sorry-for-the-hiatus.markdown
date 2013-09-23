@@ -3,7 +3,7 @@ layout: post
 title: "Sorry for the Recent Lack of Content"
 date: 2013-01-13 14:56
 comments: true
-categories: more_blog_posts_coming
+categories: misc
 ---
 Dear Readers,
 

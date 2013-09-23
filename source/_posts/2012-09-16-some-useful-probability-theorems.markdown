@@ -3,7 +3,7 @@ layout: post
 title: "Some Useful Probability Theorems"
 date: 2012-09-16 18:35
 comments: true
-categories: math
+categories: [math, stochastic-processes]
 ---
 
 I have been doing a review of stochastic processes. The other night, I was doing some review problems in [Ross' Stochastic Processes](http://www.amazon.com/Stochastic-Processes-Sheldon-M-Ross/dp/0471120626/ref=sr_1_1?ie=UTF8&qid=1347845730&sr=8-1&keywords=ross+stochastic+processes). Chapter 1 of the book reviews some preliminaries, and it was fun doing some problems and getting a reminder of some probability essentials.

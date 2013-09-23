@@ -5,6 +5,7 @@ layout: post
 slug: my-workflow-for-running-jobs
 title: My Workflow for Running Jobs
 wordpress_id: 20
+categories: workflow
 ---
 
 In this post, I explain my general setup for running jobs on EC2. Since a picture is worth 1000 words, lets start with a picture and use a few words to fill in the gaps. 

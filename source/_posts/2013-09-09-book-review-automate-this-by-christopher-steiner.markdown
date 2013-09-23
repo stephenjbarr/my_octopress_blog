@@ -3,7 +3,7 @@ layout: post
 title: "Book Review: 'Automate This' by Christopher Steiner"
 date: 2013-09-09 22:54
 comments: true
-categories: book_review, cs
+categories: [book-review, computer-science, futurism]
 ---
 
 I recently finished [Automate This](http://www.chrissteiner.com/#!books/cnec) by [Christopher Steiner](http://www.chrissteiner.com/). It was a nice and fast read, and discussed how algorithms, specifically algorithms for making decisions, have an ever-increasing role in our lives. He beings this book from the perspective of Wall Street and trading firms, which were innovative in implementing algorithms for trading, initially doing simple things such as arbitrage to capture a [bid-ask spread](http://en.wikipedia.org/wiki/Bid_ask_spread). Steiner tells the story of one particular investor, [Thomas Peterffy](http://en.wikipedia.org/wiki/Thomas_Peterffy), who was the first to create a fully closed-loop algorithmic trading system by [hacking a NASDAQ terminal](http://www.forbes.com/sites/christophersteiner/2012/08/30/how-the-nasdaq-got-hacked/).

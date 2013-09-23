@@ -3,7 +3,7 @@ layout: post
 title: "More Mixing of R and C++"
 date: 2012-08-29 23:09
 comments: true
-categories: R, c++, Rcpp
+categories: [R, c++, Rcpp]
 ---
 
 A few of my [previous blog posts](https://www.google.com/search?q=site%3Asteve.planetbarr.com%2Fo&q=rcpp) have mentioned mixing R and C++ using [Rcpp](http://dirk.eddelbuettel.com/code/rcpp.html) and [RInside](http://dirk.eddelbuettel.com/code/rinside.html). The latter package, `RInside`, is for embedding an `R` instance inside of a `C++` program.

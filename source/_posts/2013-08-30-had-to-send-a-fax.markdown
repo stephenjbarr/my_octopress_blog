@@ -3,7 +3,7 @@ layout: post
 title: "Had to send a fax"
 date: 2013-08-30 07:10
 comments: true
-categories: tech
+categories: [futurism]
 ---
 
 Yesterday, I was dealing with an institution in another company that required a signed document. They required that this document be [faxed](http://en.wikipedia.org/wiki/Fax). This technology is from the late 1800's, and solved the problem of moving documents across great distances for a long time. However, there is [a much better way](http://en.wikipedia.org/wiki/Internet). I went to a local FedEx (formerly FedEx Kinko's, formerly Kinko's) to send the fax and they charged $5.99 to transmit this one page of text halfway across the globe. 

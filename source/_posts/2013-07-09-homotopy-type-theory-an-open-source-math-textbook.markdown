@@ -3,7 +3,7 @@ layout: post
 title: "Homotopy Type Theory - An Open Source Math Textbook"
 date: 2013-07-09 19:24
 comments: true
-categories: homotopy_type_theory, ebook
+categories: [homotopy-type-theory, ebook]
 ---
 
 {% img images/hott-online-cover.jpg %}

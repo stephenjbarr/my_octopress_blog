@@ -3,7 +3,7 @@ layout: post
 title: "Book Review: 'How to Create a Mind' by Ray Kurzweil"
 date: 2013-08-31 17:32
 comments: true
-categories: books, artificial-intelligence, AI, neuroscience
+categories: [books, artificial-intelligence, neuroscience, futurism]
 ---
 
 {% img /images/how-to-create-a-mind.png  %}

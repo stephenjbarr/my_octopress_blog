@@ -3,7 +3,7 @@ layout: post
 title: "Playing with Haskell"
 date: 2013-03-30 18:45
 comments: true
-categories: haskell, programming
+categories: [haskell, programming]
 ---
 {% img http://s3.amazonaws.com/stevejb_blog_content/Haskell-Logo.svg 300 %}
 

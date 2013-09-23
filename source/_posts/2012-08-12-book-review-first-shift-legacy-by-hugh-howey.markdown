@@ -3,7 +3,7 @@ layout: post
 title: "Book Review: 'First Shift - Legacy' by Hugh Howey"
 date: 2012-08-12 23:04
 comments: true
-categories: book_review
+categories: book-review
 ---
 
 Welcome to the first of my book reviews. Although this blog is mainly about my research, it is also about things that are interesting to me. And, one of those things are books. I enjoy reading, mainly science fiction. The first book I would like to review is *First Shift, Legacy* by [Hugh Howey][Hugh Howey's Website].

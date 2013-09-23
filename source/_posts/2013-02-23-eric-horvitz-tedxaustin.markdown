@@ -3,7 +3,7 @@ layout: post
 title: "Eric Horvitz: TEDxAustin"
 date: 2013-02-23 15:57
 comments: true
-categories: 
+categories: [ted, video]
 published: true
 ---
 

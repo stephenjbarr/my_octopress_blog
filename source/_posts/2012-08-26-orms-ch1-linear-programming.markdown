@@ -3,7 +3,7 @@ layout: post
 title: "ORMS Ch1 - Linear Programming"
 date: 2012-08-26 11:22
 comments: true
-categories: orms, linear_programming
+categories: linear-programming
 ---
 
 In a previous post, I mentioned that I was working through the [*Operations Research and Management Science Handbook*](http://www.amazon.com/Operations-Research-Management-Science-Handbook/dp/0849397219/ref=sr_1_1?ie=UTF8&qid=1345966432&sr=8-1&keywords=operations+research+and+management+science+handbook). Chapter 1 is about linear programming.

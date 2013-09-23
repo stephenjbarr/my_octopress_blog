@@ -3,7 +3,7 @@ layout: post
 title: "Coursera Course: Probabilistic Graphical Models - Daphne Koller"
 date: 2013-04-01 13:11
 comments: true
-categories: machine-learning, coursera, pgm
+categories: [machine-learning, coursera, pgm, learning]
 ---
 
 {% youtube bVMBe50GfnI %}

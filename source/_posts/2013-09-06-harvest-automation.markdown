@@ -3,7 +3,7 @@ layout: post
 title: "Harvest Automation"
 date: 2013-09-06 13:57
 comments: true
-categories: ai, robotics
+categories: [artificial-intelligence, robotics, futurism]
 ---
 
 

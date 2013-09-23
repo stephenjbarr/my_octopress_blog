@@ -3,7 +3,7 @@ layout: post
 title: "Parallel Numerical Integration using Haskell"
 date: 2013-08-01 08:52
 comments: true
-categories: haskell, hmatrix, gsl, parallel
+categories: [haskell, hmatrix, gsl, parallel]
 ---
 
 

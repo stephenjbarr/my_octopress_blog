@@ -3,7 +3,7 @@ layout: post
 title: "Liking a John Mayer Song: How I Ruined a Perfectly Good Pandora Station"
 date: 2013-02-17 13:20
 comments: true
-categories: machine_learning, fun
+categories: [machine-learning, fun]
 ---
 
 {% img  https://s3.amazonaws.com/stevejb_blog_content/pandora_logo_blue.jpg %}

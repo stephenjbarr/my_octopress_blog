@@ -3,7 +3,7 @@ layout: post
 title: "The Setup"
 date: 2012-08-20 22:59
 comments: true
-categories: misc
+categories: [hardware, workflow]
 ---
 
 ## Last update: 2012-08-20 22:59

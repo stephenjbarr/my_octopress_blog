@@ -5,6 +5,7 @@ layout: post
 slug: using-rinside-with-rcppeigen
 title: Using RInside with RcppEigen
 wordpress_id: 32
+categories: [R, Eigen]
 ---
 
 ## 1 Introduction

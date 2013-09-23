@@ -3,7 +3,7 @@ layout: post
 title: "Haskell featured in HPCwire"
 date: 2013-07-09 19:52
 comments: true
-categories: haskell, hpc
+categories: [haskell, hpc]
 ---
 
 [Lustre Founder Spots Haskell on HPC Horizon](http://www.hpcwire.com/hpcwire/2013-06-24/lustre_founder_spots_haskell_on_hpc_horizon.html). The article can be summarized by the following quote:

@@ -3,7 +3,7 @@ layout: post
 title: "Operations Research and Management Science Handbook"
 date: 2012-08-26 00:32
 comments: true
-categories: [book,reading]
+categories: [book, reading]
 ---
 
 As a preparation for my course work, I wanted to get a good survey of the operations management literature. After some searching, I found the [*Operations Research and Management Science Handbook*](http://www.amazon.com/Operations-Research-Management-Science-Handbook/dp/0849397219/ref=sr_1_1?ie=UTF8&qid=1345966432&sr=8-1&keywords=operations+research+and+management+science+handbook), edited by [A. Ravi Ravindran](http://www.informs.org/Connect-with-People/Speakers-Program/Search-for-a-Speaker/Search-by-Location/Northeast-U.S./Ravindran-A.-Ravi-PhD-Penn-State-University).
