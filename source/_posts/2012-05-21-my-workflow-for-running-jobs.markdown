@@ -10,7 +10,7 @@ categories: workflow
 
 In this post, I explain my general setup for running jobs on EC2. Since a picture is worth 1000 words, lets start with a picture and use a few words to fill in the gaps. 
 
-![http://steve.planetbarr.com/wordpress/wp-content/uploads/2012/05/wpid-my_workflow.png](http://steve.planetbarr.com/wordpress/wp-content/uploads/2012/05/wpid-my_workflow.png)
+{% img /images/my_workflow.png %}
 
 I start working on [my dev box](http://steve.planetbarr.com/wordpress/?page_id=8), and in one workflow scenario I will have a model that I will want to run across many different parameterizations. For example, I may want to run the model for many different random parameterizations to get an idea of which parameters are driving which behaviors in the data. 
 
