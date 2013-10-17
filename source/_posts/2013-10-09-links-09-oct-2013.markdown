@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Links - 09 Oct 2013"
+date: 2013-10-09 12:26
+comments: true
+categories: [machine-learning, productivity, big-data, economics, news]
+---
+
+I often come accross links that may not yet need their own blog bost, but may be useful for reference. I will therefore have a series of *links* posts where I can post links for reference.
+
++ [A Course in Machine Learning, by Hal Daume III](http://ciml.info/)
++ [Yottamine Sets Big Data Machine Learning Record](http://www.prweb.com/releases/2013/9/prweb11094246.htm)
++ [Steven Levitt on the 'Freakonomics' of connecting with consumers](http://www.marketingweek.co.uk/news/steven-levitt-on-the-freakonomics-of-connecting-with-consumers/4006824.article)
++ [Bit of News](http://bitofnews.com/)
++ [Facebook Tech Director Reveals Open Networking Plan](http://www.enterprisetech.com/2013/10/04/facebook-operations-chief-reveals-open-networking-plan/)
++ [You Must Try and then You Must Ask](https://blogs.akamai.com/2013/10/you-must-try-and-then-you-must-ask.html)
++ [Empirics and Psychology: Eight of the World’s Top Young Economists Discuss Where Their Field Is Going](http://bigthink.com/power-games/empirics-and-psychology-eight-of-the-worlds-top-young-economists-discuss-where-their-field-is-going?page=all)
++ [Here's How Self Driving Cars Could Clear Up Traffic Jams](http://www.washingtonpost.com/blogs/wonkblog/wp/2013/09/24/heres-how-self-driving-cars-could-clear-up-traffic-jams/?tid=rssfeed)

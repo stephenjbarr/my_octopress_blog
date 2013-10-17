@@ -1,0 +1,15 @@
+---
+layout: post
+title: "Links 12 Oct 2013"
+date: 2013-10-12 12:53
+comments: true
+categories: [NLP, programming, emacs, haskell, functional-programming]
+---
+
++ [TextTeaser](https://github.com/MojoJolo/textteaser) - Summarize a body of text
++ [Free Programming Books](https://github.com/vhf/free-programming-books/blob/master/free-programming-books.md#haskell)
++ [Sauron](http://emacs-fu.blogspot.com/2011/12/sauron-keeping-eye-on-whats-going-on.html) - Keep an eye on various processes in Emacs
++ [Emacs Calfw](https://github.com/kiwanami/emacs-calfw) - A nice Emacs calendar that works with [org-mode](http://orgmode.org/)(a blog post on my Emacs workflow forthcoming)
++ [Haskell papers mentioned on #Haskell](http://ircbrowse.net/pdfs/haskell/unique)
++ [Sentiment Analysis](http://nlp.stanford.edu:8080/sentiment/rntnDemo.html)
++ [The Funcational Database](http://www.infoq.com/presentations/datomic-functional-database) - functional and database seem like opposites. Let's see why they are not.
