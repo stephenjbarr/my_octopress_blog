@@ -76,7 +76,7 @@ where 20 is the number of CPU cores to dedicate to this run.
 
 
 **Running: All cores utilized at near 100%**
-{% img images/integrator-running.png %}
+{% img /images/integrator-running.png %}
 
 
 ### Links
