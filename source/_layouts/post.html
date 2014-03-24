@@ -25,10 +25,6 @@ single: true
     </p>
   </footer>
 </article>
-<!-- {% if site.related_posts.size > 1 %} <article class="archives"> <div class="related-posts"> <h2>Related Posts</h2> {% for post in site.related_posts limit:site.recent_posts %} <article> <h3 class="title"><a href="{{ root_url }}{{ post.url }}">{{post.title}}</a></h3> <div class="meta"> <span class="tags">{% include post/categories.html %}</span> {% if site.disqus_short_name and post.comments == true and site.disqus_show_comment_count == true %} <time datetime="{{ date | datetime | date_to_xmlschema }}" pubdate{% if post.updated %} data-updated="true"{% endif %}>{{ date | date: "%F" }}</time> {% endif %} </div> </article> {% endfor %} </div> </article> {% endif %} -->
-
-<!-- Read more: http://www.narga.net/improve-octopress-advanced-tweaks-tips/#ixzz2fj9Or5bX  -->
-<!-- Follow us: @narga on Twitter | narga.net on Facebook -->
 {% if site.disqus_short_name and page.comments == true %}
   <section>
     <h1>Comments</h1>
