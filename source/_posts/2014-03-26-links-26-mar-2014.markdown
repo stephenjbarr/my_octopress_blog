@@ -1,0 +1,37 @@
+---
+layout: post
+title: "Links 26 Mar 2014"
+date: 2014-03-26 14:09:16 -0700
+comments: true
+categories: links
+---
+The following are a few links of things that have been on my radar.
+
+
+# 2048
+
+Just over 2 weeks ago, the game 2048 was released.
+It is very interesting and slightly addicting, and definitely worth a look.
+A few people have tried to make solvers using different attempts.
+At some point I would like to try making a deep neural network solver for this.
+
+- [2048, the game itself](http://gabrielecirulli.github.io/2048/)
+- [Discussion on Hacker news](https://news.ycombinator.com/item?id=7373566)
+- [2048 from a Game Theory Perspective](http://orindevon.blogspot.com/2014/03/artificial-intelligence-operational.html), by Professor David K. Smith, of Exeter
+- [2048 AI discussion on stack exchange](http://stackoverflow.com/questions/22342854/what-is-the-optimal-algorithm-for-the-game-2048)
+- [One 2048 AI](https://github.com/ov3y/2048-AI), which uses minimax search and $$\alpha-\beta$$ pruning (see [Wikipedia](http://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning))
+- [2048 Using A*](https://github.com/FelixNeutatz/2048_M-A-Star)
+
+
+# Haskell-related links
+
+- [An Introduction to Recursion Schemes and Codata](http://patrickthomson.ghost.io/an-introduction-to-recursion-schemes/)
+- [Braiding in Circles](http://www.cs.rutgers.edu/~ccshan/crossing/farm2013.pdf)
+- [Introductions to Advanced Haskell Topics](http://www.haskellforall.com/2014/03/introductions-to-advanced-haskell-topics.html)
+- [Phil Wadler: Monads for Functional Programming](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0CDQQFjAB&url=http%3A%2F%2Fhomepages.inf.ed.ac.uk%2Fwadler%2Fpapers%2Fmarktoberdorf%2Fbaastad.pdf&ei=jEYzU8j_Jcf0oASSroLICw&usg=AFQjCNF195Aa51CrLJLed2BPDUhXTQ083w&sig2=xCIoYMSHZkP0giXNbppdSQ&bvm=bv.63808443,d.cGU)
+- [Hulk: An IRC Server in Haskell](http://chrisdone.com/posts/hulk-haskell-irc-server) - IRC is extremely useful. #haskell on Freenode is a very nice community and I have received many good suggestions from the people there.
+- [Structured Haskell Mode](https://github.com/chrisdone/structured-haskell-mode) - I need to give this a try
+
+# Coffee
+
+- [When is the best time to drink coffee?](http://www.fastcodesign.com/3020940/asides/the-best-time-of-day-to-drink-coffee?utm_content=buffer1eb3a&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)
